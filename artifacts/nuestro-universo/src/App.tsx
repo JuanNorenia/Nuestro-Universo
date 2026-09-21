@@ -161,11 +161,12 @@ function AppHome() {
           </div>
           <motion.div className="orbital-world" aria-label="Una pequeña ilustración de nuestro planeta" initial={{ opacity: 0, rotate: -6 }} animate={{ opacity: 1, rotate: 0 }} transition={{ duration: 1.4, delay: .25 }}>
             <div className="planet">
-              <div className="planet-garden" aria-label="Un pequeño jardín de flores">
+              <div className="planet-garden" role="img" aria-label="Una flor rosa creciendo en un pequeño jardín">
                 <span className="garden-stem" />
                 <span className="garden-leaf garden-leaf--left" />
                 <span className="garden-leaf garden-leaf--right" />
-                <span className="garden-flower"><i /><i /><i /><i /><b /></span>
+                <span className="garden-calyx" />
+                <span className="garden-flower"><i /><i /><i /><i /><i /><b /></span>
               </div>
             </div>
             <div className="orbit-track orbit-track--one"><span className="orbit-dot orbit-dot--gold" /></div>
