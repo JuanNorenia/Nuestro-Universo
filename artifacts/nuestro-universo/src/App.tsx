@@ -14,6 +14,7 @@ const stars = Array.from({ length: 58 }, (_, index) => ({
   left: `${(index * 37) % 100}%`,
   top: `${(index * 61 + 7) % 100}%`,
   delay: `${(index % 7) * 0.4}s`,
+  duration: `${7 + (index % 6) * 1.8}s`,
 }));
 
 type MemoryDetail = {
@@ -43,7 +44,14 @@ function Entry({ onEnter }: { onEnter: () => void }) {
   const reduced = useReducedMotion();
   return (
     <motion.div className="entry-screen" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : 0.8 }}>
-      <div className="entry-orbit" aria-hidden="true" />
+      <Stars className="entry-stars" />
+      <div className="entry-orbit entry-orbit--outer" aria-hidden="true">
+        <span className="entry-orbit-dot entry-orbit-dot--gold" />
+        <span className="entry-orbit-dot entry-orbit-dot--pink" />
+      </div>
+      <div className="entry-orbit entry-orbit--inner" aria-hidden="true">
+        <span className="entry-orbit-dot entry-orbit-dot--mint" />
+      </div>
       <div className="entry-inner">
         <div className="eyebrow">un mensaje para {universoConfig.recipientName}</div>
         <motion.h1 className="display" initial={reduced ? false : { opacity: 0, scale: .92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1 }}>
@@ -56,8 +64,8 @@ function Entry({ onEnter }: { onEnter: () => void }) {
   );
 }
 
-function Stars() {
-  return <div aria-hidden="true">{stars.map((star, index) => <span key={index} className="star" style={{ left: star.left, top: star.top, animationDelay: star.delay }} />)}</div>;
+function Stars({ className = '' }: { className?: string }) {
+  return <div className={`star-field ${className}`} aria-hidden="true">{stars.map((star, index) => <span key={index} className="star" style={{ left: star.left, top: star.top, animationDelay: star.delay, animationDuration: star.duration }} />)}</div>;
 }
 
 function AppHome() {
@@ -152,8 +160,17 @@ function AppHome() {
             </MotionReveal>
           </div>
           <motion.div className="orbital-world" aria-label="Una pequeña ilustración de nuestro planeta" initial={{ opacity: 0, rotate: -6 }} animate={{ opacity: 1, rotate: 0 }} transition={{ duration: 1.4, delay: .25 }}>
-            <div className="planet"><div className="planet-garden" /></div>
-            <span className="orbit-dot one" /><span className="orbit-dot two" /><span className="orbit-dot three" />
+            <div className="planet">
+              <div className="planet-garden" aria-label="Un pequeño jardín de flores">
+                <span className="garden-stem" />
+                <span className="garden-leaf garden-leaf--left" />
+                <span className="garden-leaf garden-leaf--right" />
+                <span className="garden-flower"><i /><i /><i /><i /><b /></span>
+              </div>
+            </div>
+            <div className="orbit-track orbit-track--one"><span className="orbit-dot orbit-dot--gold" /></div>
+            <div className="orbit-track orbit-track--two"><span className="orbit-dot orbit-dot--mint" /></div>
+            <div className="orbit-track orbit-track--three"><span className="orbit-dot orbit-dot--pink" /></div>
           </motion.div>
           <div className="hero-stamp" aria-hidden="true"><span>hecho<br />a mano<br />para ti</span></div>
         </section>
