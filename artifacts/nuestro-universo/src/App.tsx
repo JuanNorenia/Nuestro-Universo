@@ -65,8 +65,10 @@ function AppHome() {
   const [soundOn, setSoundOn] = useState(false);
   const [volume, setVolume] = useState(0.42);
   const [openDiscovery, setOpenDiscovery] = useState<string | null>(null);
+  const [discoveryVisit, setDiscoveryVisit] = useState(0);
   const [openNote, setOpenNote] = useState<string | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<MemoryDetail | null>(null);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [count, setCount] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -80,6 +82,13 @@ function AppHome() {
     tick();
     const interval = window.setInterval(tick, 1000);
     return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setHasScrolled(window.scrollY > 36);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleSound = () => {
@@ -106,13 +115,15 @@ function AppHome() {
     if (audioRef.current) audioRef.current.volume = nextVolume;
   };
 
+  const selectedDiscovery = discoveries.find((item) => item.id === openDiscovery);
+
   return (
     <div className="universe-page">
       <Stars />
       <div className="space-grid" aria-hidden="true" />
        <AnimatePresence>{!entered && <Entry onEnter={handleEnter} />}</AnimatePresence>
 
-      <header className="site-nav container-wide">
+      <header className={`site-nav container-wide ${hasScrolled ? 'is-scrolled' : ''}`}>
         <a className="wordmark" href="#top" data-testid="link-wordmark">nuestro<span>·</span>universo</a>
         <nav className="nav-links" aria-label="Secciones principales">
           <a href="#recuerdos" data-testid="link-memories">recuerdos</a>
@@ -156,14 +167,36 @@ function AppHome() {
             <MotionReveal delay={.1}>
               <div className="discovery-field" role="group" aria-label="Mapa interactivo de descubrimientos">
                 {discoveries.map((discovery) => (
-                  <button key={discovery.id} className={`discovery-node ${openDiscovery === discovery.id ? 'active' : ''}`} style={{ left: discovery.x, top: discovery.y }} onClick={() => setOpenDiscovery(discovery.id)} data-testid={`button-discovery-${discovery.id}`}>
+                  <button key={discovery.id} className={`discovery-node node-${discovery.id} ${openDiscovery === discovery.id ? 'active' : ''}`} style={{ left: discovery.x, top: discovery.y }} onClick={() => { setOpenDiscovery(discovery.id); setDiscoveryVisit((visit) => visit + 1); }} data-testid={`button-discovery-${discovery.id}`}>
                     <span className="node-dot" /><span className="node-label">{discovery.label}</span>
                   </button>
                 ))}
+                {selectedDiscovery && (
+                  <motion.div
+                    key={`${selectedDiscovery.id}-${discoveryVisit}`}
+                    className={`discovery-traveler traveler-${selectedDiscovery.id}`}
+                    initial={{ left: '50%', top: '50%', opacity: 0, scale: .25 }}
+                    animate={{ left: selectedDiscovery.x, top: selectedDiscovery.y, opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.25, ease: [0.2, 0.75, 0.25, 1] }}
+                    aria-hidden="true"
+                  >
+                    <span className="traveler-planet" />
+                  </motion.div>
+                )}
                 <AnimatePresence mode="wait">
-                  <motion.p key={openDiscovery ?? 'empty'} className="discovery-reveal" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                    {discoveries.find((item) => item.id === openDiscovery)?.text ?? 'Elige una estrella para encontrar un secreto.'}
-                  </motion.p>
+                  <motion.div key={openDiscovery ?? 'empty'} className="discovery-reveal" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+                    {selectedDiscovery ? (
+                      <div className="discovery-reveal-content">
+                        <span className={`discovery-preview preview-${selectedDiscovery.id}`} aria-hidden="true"><span /></span>
+                        <div>
+                          <span className="planet-arrived">has llegado a {selectedDiscovery.label}</span>
+                          <p>{selectedDiscovery.text}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      'Elige una estrella para encontrar un secreto.'
+                    )}
+                  </motion.div>
                 </AnimatePresence>
               </div>
             </MotionReveal>
