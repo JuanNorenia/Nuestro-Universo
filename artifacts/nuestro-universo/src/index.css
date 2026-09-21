@@ -160,22 +160,27 @@ button { font: inherit; }
 .discovery-intro { position:sticky; top:120px; align-self:start; }
 .discovery-intro p { color:#a9a090; max-width:290px; line-height:1.7; font-size:14px; }
 .discovery-intro .tiny-rule { width:64px; height:1px; background:#e8b866; margin:28px 0; }
-.discovery-field { min-height:580px; position:relative; border:1px solid rgba(223,190,124,.19); border-radius:50%; background:radial-gradient(ellipse at center, rgba(54,77,71,.3), transparent 63%); }
-.discovery-field::before { content:''; position:absolute; inset:10%; border:1px dashed rgba(222,184,117,.18); border-radius:50%; transform:rotate(22deg) scaleY(.55); }
-.discovery-node { position:absolute; background:none; border:0; cursor:pointer; color:#efdcad; text-align:center; transform:translate(-50%,-50%); }
+.discovery-field { min-height:580px; position:relative; isolation:isolate; overflow:hidden; border:1px solid rgba(223,190,124,.19); border-radius:50%; background:radial-gradient(ellipse at center, rgba(54,77,71,.3), transparent 63%); }
+.discovery-field::before, .discovery-field::after { content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit; }
+.discovery-field::before { z-index:0; inset:10%; border:1px dashed rgba(222,184,117,.18); transform:rotate(22deg) scaleY(.55); }
+.discovery-field::after { z-index:0; opacity:0; background:radial-gradient(circle at var(--active-x, 50%) var(--active-y, 50%), rgba(232,184,102,.21) 0, rgba(226,151,164,.1) 9%, transparent 24%); transition:opacity .65s ease, background-position .9s cubic-bezier(.2,.75,.25,1); }
+.discovery-field.has-selection::after { opacity:1; }
+.discovery-node { position:absolute; z-index:2; background:rgba(17,16,34,.18); border:0; border-radius:999px; cursor:pointer; color:#efdcad; text-align:center; transform:translate(-50%,-50%); padding:12px 10px 9px; transition:background .45s ease, box-shadow .45s ease, transform .45s cubic-bezier(.2,.75,.25,1); }
+.discovery-node:hover, .discovery-node.active { background:rgba(17,16,34,.62); box-shadow:0 0 0 1px rgba(232,184,102,.18), 0 10px 28px rgba(8,6,20,.2); transform:translate(-50%,-50%) scale(1.05); }
 .discovery-node:focus-visible { outline:1px solid #e8b866; outline-offset:8px; border-radius:50%; }
-.node-dot { display:block; width:25px; height:25px; margin:0 auto 11px; border-radius:50%; background:#e8b866; box-shadow:0 0 0 7px rgba(232,184,102,.08), 0 0 24px rgba(232,184,102,.6); transition:transform .25s, box-shadow .25s; }
+.node-dot { display:block; width:25px; height:25px; margin:0 auto 8px; border-radius:50%; background:#e8b866; box-shadow:0 0 0 7px rgba(232,184,102,.08), 0 0 24px rgba(232,184,102,.6); transition:transform .45s cubic-bezier(.2,.75,.25,1), box-shadow .45s ease; }
 .node-moon .node-dot, .preview-moon, .traveler-moon .traveler-planet { background:radial-gradient(circle at 30% 28%, #f6dfb4 0 18%, #d28e98 19% 46%, #524a68 47% 100%); }
 .node-garden .node-dot, .preview-garden, .traveler-garden .traveler-planet { background:radial-gradient(circle at 35% 28%, #f6cc82 0 14%, #8ab07b 15% 42%, #356b62 43% 100%); }
 .node-comet .node-dot, .preview-comet, .traveler-comet .traveler-planet { background:linear-gradient(135deg, #f3dfb3 0 22%, #e89ca9 23% 55%, #7d6c9b 56% 100%); }
 .node-lake .node-dot, .preview-lake, .traveler-lake .traveler-planet { background:radial-gradient(circle at 50% 28%, #d7e2b1 0 16%, #75bcb2 17% 46%, #2b5364 47% 100%); }
 .node-window .node-dot, .preview-window, .traveler-window .traveler-planet { background:radial-gradient(circle at 68% 34%, #f0bb78 0 13%, #c27b80 14% 42%, #39334f 43% 100%); }
-.discovery-node:hover .node-dot, .discovery-node.active .node-dot { transform:scale(1.45); background:#ee9eae; }
+.discovery-node:hover .node-dot, .discovery-node.active .node-dot { transform:scale(1.22); box-shadow:0 0 0 8px rgba(232,184,102,.1), 0 0 34px rgba(238,158,174,.75); }
 .node-label { font:10px var(--app-font-mono); text-transform:uppercase; letter-spacing:.1em; white-space:nowrap; color:#bcb09b; }
 .discovery-traveler { position:absolute; z-index:3; width:42px; height:42px; pointer-events:none; transform:translate(-50%,-50%); }
 .discovery-traveler::after { content:''; position:absolute; inset:-18px; border:1px solid rgba(232,184,102,.38); border-radius:50%; animation:planet-pulse 1.5s ease-out infinite; }
 .traveler-planet { display:block; width:100%; height:100%; border-radius:50%; box-shadow:0 0 28px rgba(238,175,119,.65); }
-.discovery-reveal { min-height:104px; margin-top:25px; text-align:center; color:#e6d6b4; font:italic 21px var(--app-font-serif); }
+.discovery-reveal-wrap { position:absolute; z-index:5; left:5%; right:5%; bottom:28px; }
+.discovery-reveal { min-height:0; margin:0; padding:16px 20px; border:1px solid rgba(232,184,102,.3); border-radius:22px; background:rgba(20,18,40,.86); box-shadow:0 18px 45px rgba(5,4,15,.28), inset 0 1px rgba(255,255,255,.05); backdrop-filter:blur(14px); text-align:center; color:#e6d6b4; font:italic 21px var(--app-font-serif); }
 .discovery-reveal-content { display:flex; align-items:center; justify-content:center; gap:18px; text-align:left; }
 .discovery-preview { display:grid; place-items:center; flex:0 0 46px; width:46px; height:46px; border-radius:50%; box-shadow:0 0 28px rgba(238,175,119,.4); }
 .discovery-preview span { width:12px; height:12px; border-radius:50%; background:#f8e1ad; box-shadow:0 0 16px #f8e1ad; }
@@ -274,7 +279,7 @@ button { font: inherit; }
   .container-wide { width:min(100% - 34px, 1180px); }.site-nav { height:68px; }.nav-links { display:none; }
   .hero { min-height:830px; padding-top:110px; align-items:flex-start; }.hero h1 { font-size:clamp(64px, 20vw, 100px); margin-top:16px; }.hero-lede { max-width:290px; }.hero-stamp { top:auto; bottom:105px; right:7px; transform:scale(.7) rotate(14deg); }.orbital-world { width:110vw; right:-38%; top:42%; opacity:.56; }
   .section { padding:96px 0; }.section-header, .counter-intro { display:block; }.section-note, .counter-note { margin-top:24px; }.section-title { font-size:56px; }
-  .discovery-field { min-height:390px; }.discovery-node .node-label { font-size:8px; }.discovery-reveal { font-size:18px; min-height:95px; }
+  .discovery-field { min-height:390px; }.discovery-node .node-label { font-size:8px; }.discovery-reveal-wrap { left:4%; right:4%; bottom:18px; }.discovery-reveal { padding:13px 15px; font-size:18px; }.discovery-reveal-content { gap:12px; }.discovery-preview { flex-basis:38px; width:38px; height:38px; }
   .story-band { padding:48px 0; }.story-band-inner { display:block; }.story-band span { display:block; margin-top:22px; }
   .memory-piece { flex-basis:220px; }.memory-art { height:275px; }
   .timeline::before { left:8px; }.timeline-entry, .timeline-entry:nth-child(even) { display:block; padding:40px 0 40px 34px; }.timeline-dot { left:8px; top:49px; }.timeline-date, .timeline-entry:nth-child(even) .timeline-date { text-align:left; margin-bottom:15px; }.timeline-copy h3 { font-size:25px; }

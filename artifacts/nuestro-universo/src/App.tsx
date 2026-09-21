@@ -66,6 +66,7 @@ function AppHome() {
   const [volume, setVolume] = useState(0.42);
   const [openDiscovery, setOpenDiscovery] = useState<string | null>(null);
   const [discoveryVisit, setDiscoveryVisit] = useState(0);
+  const [travelingDiscovery, setTravelingDiscovery] = useState<string | null>(null);
   const [openNote, setOpenNote] = useState<string | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<MemoryDetail | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -165,37 +166,45 @@ function AppHome() {
               <div className="tiny-rule" /><p>Haz clic en los puntos de luz. Algunas verdades solo aparecen cuando una se toma el tiempo de buscarlas.</p>
             </MotionReveal>
             <MotionReveal delay={.1}>
-              <div className="discovery-field" role="group" aria-label="Mapa interactivo de descubrimientos">
+              <div
+                className={`discovery-field ${selectedDiscovery ? 'has-selection' : ''}`}
+                role="group"
+                aria-label="Mapa interactivo de descubrimientos"
+                style={selectedDiscovery ? { '--active-x': selectedDiscovery.x, '--active-y': selectedDiscovery.y } as CSSProperties : undefined}
+              >
                 {discoveries.map((discovery) => (
-                  <button key={discovery.id} className={`discovery-node node-${discovery.id} ${openDiscovery === discovery.id ? 'active' : ''}`} style={{ left: discovery.x, top: discovery.y }} onClick={() => { setOpenDiscovery(discovery.id); setDiscoveryVisit((visit) => visit + 1); }} data-testid={`button-discovery-${discovery.id}`}>
+                  <button key={discovery.id} className={`discovery-node node-${discovery.id} ${openDiscovery === discovery.id ? 'active' : ''}`} style={{ left: discovery.x, top: discovery.y }} onClick={() => { setOpenDiscovery(discovery.id); setTravelingDiscovery(discovery.id); setDiscoveryVisit((visit) => visit + 1); }} data-testid={`button-discovery-${discovery.id}`}>
                     <span className="node-dot" /><span className="node-label">{discovery.label}</span>
                   </button>
                 ))}
-                {selectedDiscovery && (
+                {selectedDiscovery && travelingDiscovery === selectedDiscovery.id && (
                   <motion.div
                     key={`${selectedDiscovery.id}-${discoveryVisit}`}
                     className={`discovery-traveler traveler-${selectedDiscovery.id}`}
                     initial={{ left: '50%', top: '50%', opacity: 0, scale: .25 }}
                     animate={{ left: selectedDiscovery.x, top: selectedDiscovery.y, opacity: 1, scale: 1 }}
                     transition={{ duration: 1.25, ease: [0.2, 0.75, 0.25, 1] }}
+                    onAnimationComplete={() => setTravelingDiscovery(null)}
                     aria-hidden="true"
                   >
                     <span className="traveler-planet" />
                   </motion.div>
                 )}
                 <AnimatePresence mode="wait">
-                  <motion.div key={openDiscovery ?? 'empty'} className="discovery-reveal" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                    {selectedDiscovery ? (
-                      <div className="discovery-reveal-content">
-                        <span className={`discovery-preview preview-${selectedDiscovery.id}`} aria-hidden="true"><span /></span>
-                        <div>
-                          <span className="planet-arrived">has llegado a {selectedDiscovery.label}</span>
-                          <p>{selectedDiscovery.text}</p>
+                  <motion.div key={openDiscovery ?? 'empty'} className="discovery-reveal-wrap" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                    <div className="discovery-reveal">
+                      {selectedDiscovery ? (
+                        <div className="discovery-reveal-content">
+                          <span className={`discovery-preview preview-${selectedDiscovery.id}`} aria-hidden="true"><span /></span>
+                          <div>
+                            <span className="planet-arrived">has llegado a {selectedDiscovery.label}</span>
+                            <p>{selectedDiscovery.text}</p>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      'Elige una estrella para encontrar un secreto.'
-                    )}
+                      ) : (
+                        'Elige una estrella para encontrar un secreto.'
+                      )}
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
