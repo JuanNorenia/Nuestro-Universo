@@ -1,6 +1,6 @@
-# [Project name]
+# Nuestro Universo
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Una experiencia web romántica e inmersiva para recorrer recuerdos, mensajes y una carta dentro de un universo visual hecho a medida.
 
 ## Run & Operate
 
@@ -22,23 +22,33 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/nuestro-universo/src/App.tsx` — experiencia de una sola página, navegación, interacciones y estados.
+- `artifacts/nuestro-universo/src/index.css` — sistema visual, responsive y fallback 2D sin dependencia de WebGL.
+- `artifacts/nuestro-universo/src/data/universo.ts` — configuración personal, recuerdos, timeline, galería, notas y canción.
+- `artifacts/nuestro-universo/public/media/` — carpeta destinada a las fotos y el audio reales.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- La experiencia es frontend-only: el contenido personal se edita en un módulo de datos y no requiere base de datos.
+- El universo visual usa DOM/CSS y motion para que exista una versión elegante incluso sin WebGL.
+- El audio se inicia solo después de la interacción de entrada y se controla desde un reproductor persistente.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Pantalla de entrada cinematográfica con acceso explícito al universo.
+- Mapa de descubrimientos, recuerdos con lightbox, timeline, galería, notas desplegables y carta.
+- Contador en vivo desde la fecha configurable y navegación mínima por anclas.
+- Respeta `prefers-reduced-motion` y mantiene controles accesibles en desktop y móvil.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Mantener una estética surrealista, floral, cálida e íntima, evitando una landing comercial o una página romántica genérica.
+- Mantener los datos personales fuera de los componentes para poder reemplazarlos fácilmente.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- El build manual necesita `PORT` y `BASE_PATH`; el workflow de la app los inyecta automáticamente.
+- Sustituir los valores entre corchetes y los archivos de `/media/` antes de compartir el regalo.
 
 ## Pointers
 

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Nuestro Universo"
+description = "Una experiencia web romántica e inmersiva para descubrir recuerdos, mensajes y una carta a través de un jardín flotando dentro del universo."
+version = "1.0.0"
+id = "artifacts/nuestro-universo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23861
+
+[services.development]
+run = "pnpm --filter @workspace/nuestro-universo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nuestro-universo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nuestro-universo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23861"
+BASE_PATH = "/"
