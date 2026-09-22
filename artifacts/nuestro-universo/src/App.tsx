@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
-import { discoveries, gallery, memories, notes, timeline, universoConfig } from '@/data/universo';
+import { dancerSection, discoveries, gallery, memories, notes, timeline, universoConfig } from '@/data/universo';
 
 const queryClient = new QueryClient();
 const stars = Array.from({ length: 58 }, (_, index) => ({
@@ -24,6 +24,8 @@ type MemoryDetail = {
   caption: string;
   tone: string;
   glow: string;
+  media?: string;
+  mediaType?: 'image' | 'video';
 };
 
 function MotionReveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
@@ -183,6 +185,7 @@ function AppHome() {
         <a className="wordmark" href="#top" data-testid="link-wordmark">nuestro<span>·</span>universo</a>
         <nav className="nav-links" aria-label="Secciones principales">
           <a href="#recuerdos" data-testid="link-memories">recuerdos</a>
+             <a href="#movimiento" data-testid="link-movement">movimiento</a>
           <a href="#carta" data-testid="link-letter">carta</a>
           <a href="#tiempo" data-testid="link-counter">tiempo</a>
         </nav>
@@ -276,38 +279,65 @@ function AppHome() {
           <div className="memory-marquee" data-testid="memory-list">
             {memories.map((memory) => (
               <button className="memory-piece" key={memory.id} onClick={() => setSelectedMemory(memory)} data-testid={`button-memory-${memory.id}`}>
-                <div className="memory-art" style={{ '--tone': memory.tone, '--glow': memory.glow } as CSSProperties}><div className="memory-silhouette" /><span className="memory-caption"><span className="memory-index">{memory.id} / archivo</span>{memory.title}</span></div>
+                <div className="memory-art" style={{ '--tone': memory.tone, '--glow': memory.glow } as CSSProperties}>
+                  {memory.mediaType === 'video' ? <video className="memory-media" src={memory.media} muted loop playsInline autoPlay aria-label={memory.title} /> : <img className="memory-media" src={memory.media} alt={memory.title} />}
+                  <span className="memory-shade" />
+                  <span className="memory-caption"><span className="memory-index">{memory.id} / {memory.mediaType === 'video' ? 'video' : 'archivo'}</span>{memory.title}</span>
+                </div>
                 <p>{memory.caption}</p>
               </button>
             ))}
           </div>
         </section>
 
+        <section className="section dancer-section" id="movimiento" aria-labelledby="dancer-title">
+          <div className="container-wide dancer-layout">
+            <MotionReveal className="dancer-copy">
+              <div className="eyebrow">{dancerSection.eyebrow}</div>
+              <h2 id="dancer-title" className="section-title display" dangerouslySetInnerHTML={{ __html: dancerSection.title }} />
+              <div className="tiny-rule" />
+              <p>{dancerSection.text}</p>
+            </MotionReveal>
+            <MotionReveal delay={.12} className="dancer-stage-wrap">
+              <div className="dancer-stage" aria-label="Espacio reservado para el video de Antonia bailando">
+                <div className="dancer-stage-orbit dancer-stage-orbit--one" />
+                <div className="dancer-stage-orbit dancer-stage-orbit--two" />
+                <div className="dancer-placeholder">
+                  <span className="dancer-placeholder-mark">✦</span>
+                  <span className="dancer-placeholder-kicker">próximo archivo</span>
+                  <strong>Antonia bailando</strong>
+                  <span>{dancerSection.placeholder}</span>
+                </div>
+              </div>
+            </MotionReveal>
+          </div>
+        </section>
+
         <section className="section timeline-section" aria-labelledby="timeline-title">
           <div className="container-wide">
-            <MotionReveal className="section-header"><div><div className="eyebrow">constelación de momentos · 04</div><h2 id="timeline-title" className="section-title display">Lo que nos<br /><em className="serif-italic">trajo aquí.</em></h2></div><p className="section-note">Una línea imperfecta para una historia que todavía está escribiéndose.</p></MotionReveal>
+            <MotionReveal className="section-header"><div><div className="eyebrow">constelación de momentos · 05</div><h2 id="timeline-title" className="section-title display">Lo que nos<br /><em className="serif-italic">trajo aquí.</em></h2></div><p className="section-note">Una línea imperfecta para una historia que todavía está escribiéndose.</p></MotionReveal>
             <div className="timeline">{timeline.map((entry, index) => <MotionReveal key={entry.title} delay={index * .08} className="timeline-entry"><span className="timeline-dot" /><div className="timeline-date">{entry.date}</div><div className="timeline-copy"><h3>{entry.title}</h3><p>{entry.text}</p></div></MotionReveal>)}</div>
           </div>
         </section>
 
         <section className="section gallery-section container-wide" aria-labelledby="gallery-title">
-          <MotionReveal className="section-header"><div><div className="eyebrow">postales que no envié · 05</div><h2 id="gallery-title" className="section-title display">La luz<br /><em className="serif-italic">se parece a ti.</em></h2></div><p className="section-note">Un álbum provisional. Aquí van las imágenes que faltan por revelar.</p></MotionReveal>
+          <MotionReveal className="section-header"><div><div className="eyebrow">postales que no envié · 06</div><h2 id="gallery-title" className="section-title display">La luz<br /><em className="serif-italic">se parece a ti.</em></h2></div><p className="section-note">Un álbum provisional. Aquí van las imágenes que faltan por revelar.</p></MotionReveal>
           <div className="gallery-grid">{gallery.map((item) => <button key={item.id} className="gallery-item" style={{ '--gallery-bg': item.background, '--gallery-accent': item.accent } as CSSProperties} onClick={() => setSelectedMemory({ id: item.id, title: item.label, caption: 'una imagen esperando su momento', tone: item.background, glow: item.accent })} data-testid={`button-gallery-${item.id}`}><span className="gallery-art" /><span className="gallery-label">{item.label}</span></button>)}</div>
         </section>
 
         <section className="section notes-section" aria-labelledby="notes-title">
           <div className="container-wide notes-layout">
-            <MotionReveal className="notes-intro"><div className="eyebrow">abrir cuando quieras · 06</div><h2 id="notes-title" className="display">Notas para<br /><em className="serif-italic">tus días.</em></h2><p>Algunas cosas no necesitan una ocasión. Puedes volver a abrirlas cuando el día pida un poquito de magia.</p></MotionReveal>
+            <MotionReveal className="notes-intro"><div className="eyebrow">abrir cuando quieras · 07</div><h2 id="notes-title" className="display">Notas para<br /><em className="serif-italic">tus días.</em></h2><p>Algunas cosas no necesitan una ocasión. Puedes volver a abrirlas cuando el día pida un poquito de magia.</p></MotionReveal>
             <div className="notes-stack">{notes.map((note) => <MotionReveal key={note.id}><div className="note-item"><button className="note-trigger" onClick={() => setOpenNote(openNote === note.id ? null : note.id)} aria-expanded={openNote === note.id} data-testid={`button-note-${note.id}`}><span>{note.title}</span>{openNote === note.id ? <ChevronUp size={17} /> : <ChevronDown size={17} />}</button><AnimatePresence>{openNote === note.id && <motion.div className="note-body" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>{note.body}</motion.div>}</AnimatePresence></div></MotionReveal>)}</div>
           </div>
         </section>
 
         <section className="letter-section" id="carta" aria-labelledby="letter-title">
-          <MotionReveal className="letter"><div className="eyebrow" style={{ color: '#a36f70' }}>para leer despacio · 07</div><h2 id="letter-title">Querida<br />{universoConfig.recipientName},</h2>{universoConfig.letter.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<div className="signature">con amor,<br />{universoConfig.senderName}</div></MotionReveal>
+          <MotionReveal className="letter"><div className="eyebrow" style={{ color: '#a36f70' }}>para leer despacio · 08</div><h2 id="letter-title">Querida<br />{universoConfig.recipientName},</h2>{universoConfig.letter.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<div className="signature">con amor,<br />{universoConfig.senderName}</div></MotionReveal>
         </section>
 
         <section className="counter-section" id="tiempo" aria-labelledby="counter-title">
-          <div className="container-wide"><div className="counter-intro"><div><div className="eyebrow">tiempo de nosotros · 08</div><h2 id="counter-title" className="section-title display">Desde aquel<br /><em className="serif-italic">día.</em></h2></div><p className="counter-note">El contador empieza en {universoConfig.firstDateLabel.toLowerCase()}. No cuenta lo importante, pero nos recuerda que sigue pasando.</p></div>
+          <div className="container-wide"><div className="counter-intro"><div><div className="eyebrow">tiempo de nosotros · 09</div><h2 id="counter-title" className="section-title display">Desde aquel<br /><em className="serif-italic">día.</em></h2></div><p className="counter-note">El contador empieza en {universoConfig.firstDateLabel.toLowerCase()}. No cuenta lo importante, pero nos recuerda que sigue pasando.</p></div>
             <div className="counter-grid" aria-label="Tiempo transcurrido" data-testid="relationship-counter">{([['days', 'días'], ['hours', 'horas'], ['minutes', 'minutos'], ['seconds', 'segundos']] as const).map(([key, label]) => <div className="counter-cell" key={key}><span className="counter-number" data-testid={`counter-${key}`}>{String(count[key]).padStart(2, '0')}</span><span className="counter-label">{label}</span></div>)}</div>
           </div>
         </section>
@@ -321,7 +351,10 @@ function AppHome() {
       <AnimatePresence>{selectedMemory && <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label="Detalle del recuerdo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedMemory(null)}>
         <motion.div className="lightbox-inner" initial={{ y: 20 }} animate={{ y: 0 }} exit={{ y: 20 }} onClick={(event) => event.stopPropagation()}>
           <button className="close-button" onClick={() => setSelectedMemory(null)} aria-label="Cerrar recuerdo" data-testid="button-close-memory"><X size={16} /></button>
-          <div className="lightbox-art" style={{ '--tone': selectedMemory.tone, '--glow': selectedMemory.glow } as CSSProperties} /><h3>{selectedMemory.title}</h3><p>{selectedMemory.caption}</p>
+          <div className="lightbox-art" style={{ '--tone': selectedMemory.tone, '--glow': selectedMemory.glow } as CSSProperties}>
+            {selectedMemory.mediaType === 'video' ? <video className="lightbox-media" src={selectedMemory.media} controls playsInline autoPlay muted /> : selectedMemory.media ? <img className="lightbox-media" src={selectedMemory.media} alt={selectedMemory.title} /> : null}
+          </div>
+          <h3>{selectedMemory.title}</h3><p>{selectedMemory.caption}</p>
         </motion.div>
       </motion.div>}</AnimatePresence>
     </div>

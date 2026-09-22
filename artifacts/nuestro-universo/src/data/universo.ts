@@ -20,19 +20,26 @@ export const discoveries = [
 ] as const;
 
 export const memories = [
-  { id: '01', title: '[NOMBRE DEL RECUERDO]', caption: 'el principio de algo inmenso', media: '/media/memories/01.jpg', tone: '#2b4657', glow: '#e6a079' },
-  { id: '02', title: '[LUGAR FAVORITO]', caption: 'donde el tiempo aprendió a ir despacio', media: '/media/memories/02.jpg', tone: '#534363', glow: '#e69baf' },
-  { id: '03', title: '[UNA TARDE CUALQUIERA]', caption: 'la clase de día que quiero repetir', media: '/media/memories/03.jpg', tone: '#2e514d', glow: '#e4bc75' },
-  { id: '04', title: '[VIAJE O AVENTURA]', caption: 'dos personas, cero mapa', media: '/media/memories/04.jpg', tone: '#4d3e52', glow: '#9bcec0' },
-  { id: '05', title: '[PEQUEÑO MOMENTO]', caption: 'lo cotidiano también puede brillar', media: '/media/memories/05.jpg', tone: '#57484a', glow: '#e8b27d' },
+  { id: '01', title: 'El día que nos volvimos novios', caption: 'Uno obviamente porque ese día nos volvimos novios, peroooo también porque es la primera foto que nos tomó alguien más como una pareja feliz.', media: '/media/memories/01.png', mediaType: 'image', tone: '#2b4657', glow: '#e6a079' },
+  { id: '02', title: 'Nuestra primera mañana', caption: 'No te veía hace mucho y que te quedarás por primera vez en Bogotá conmigo fue inKKKreible. Esa fue nuestra primera mañana juntos en nuestra súper increíble luna de miel.', media: '/media/memories/02.png', mediaType: 'image', tone: '#534363', glow: '#e69baf' },
+  { id: '03', title: 'Un día de veinte mil planes', caption: 'Repetiría este día porque hicimos 20 mil cosas muy cool: salimos a dar un paseo por la Séptima, hicimos nuestro primer almuerzo (que quedó lico lico), comimos pizza, fuimos a cabaret, conociste a Juli, estuvimos en McDonald’s. Todo increíble, la verdad. Me sentí como una pareja con 40 años de casados.', media: '/media/memories/03.png', mediaType: 'image', tone: '#2e514d', glow: '#e4bc75' },
+  { id: '04', title: 'Un lugar lindísimo', caption: 'El lugar era muy lindoooooo, el plan era así súper estético, cool y alterno. Me encantaría volver contigo.', media: '/media/memories/04.png', mediaType: 'image', tone: '#4d3e52', glow: '#9bcec0' },
+  { id: '05', title: 'La casita, el calor y nosotros', caption: 'Este video es de este domingo, haciendo el mejor plan cuando estoy en Calarcá: estar en mi casita, arrunchada contigo y un ventilador al lado por el calor tan hpta. No sé qué tiene ese plan, pero simplemente me encanta; es sentirme en un lugar seguro.', media: '/media/memories/05.mp4', mediaType: 'video', tone: '#57484a', glow: '#e8b27d' },
 ] as const;
 
 export const timeline = [
-  { date: '[MES / AÑO]', title: 'El primer capítulo', text: 'Ese día no sabíamos que estábamos abriendo una puerta. Yo solo sabía que quería volver a verte.' },
+  { date: '14 MARZO 2026', title: 'El primer capítulo', text: 'Ese día no sabíamos que estábamos abriendo una puerta. Yo solo sabía que quería volver a verte.' },
   { date: '[MES / AÑO]', title: 'La primera señal', text: 'Una canción, una caminata, una coincidencia demasiado perfecta para ser casualidad.' },
   { date: '[MES / AÑO]', title: 'Nuestro pequeño idioma', text: 'Inventamos una forma de decirnos todo sin tener que explicarlo.' },
   { date: '[HOY]', title: 'El universo sigue creciendo', text: 'Todavía quedan lugares por descubrir. Qué suerte que sean contigo.' },
 ] as const;
+
+export const dancerSection = {
+  eyebrow: 'archivo de movimiento · 04',
+  title: 'Antonia<br />en movimiento.',
+  text: 'Hay personas que no solo bailan: cambian la forma en que el espacio respira. Aquí guardaremos un fragmento de ella haciendo lo que mejor sabe hacer.',
+  placeholder: 'El video de Antonia bailando llegará aquí.',
+} as const;
 
 export const gallery = [
   { id: 'g1', label: '[FOTO 01]', media: '/media/gallery/01.jpg', background: '#39334f', accent: '#d98e9a' },
