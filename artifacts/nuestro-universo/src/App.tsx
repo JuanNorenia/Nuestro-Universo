@@ -15,6 +15,7 @@ const stars = Array.from({ length: 58 }, (_, index) => ({
   top: `${(index * 61 + 7) % 100}%`,
   delay: `${(index % 7) * 0.4}s`,
   duration: `${7 + (index % 6) * 1.8}s`,
+  depth: 0.35 + (index % 6) * 0.12,
 }));
 
 type MemoryDetail = {
@@ -65,10 +66,11 @@ function Entry({ onEnter }: { onEnter: () => void }) {
 }
 
 function Stars({ className = '' }: { className?: string }) {
-  return <div className={`star-field ${className}`} aria-hidden="true">{stars.map((star, index) => <span key={index} className="star" style={{ left: star.left, top: star.top, animationDelay: star.delay, animationDuration: star.duration }} />)}</div>;
+  return <div className={`star-field ${className}`} aria-hidden="true">{stars.map((star, index) => <span key={index} className="star" data-depth={star.depth} style={{ left: star.left, top: star.top, animationDelay: star.delay, animationDuration: star.duration }} />)}</div>;
 }
 
 function AppHome() {
+  const pageRef = useRef<HTMLDivElement | null>(null);
   const [entered, setEntered] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
   const [volume, setVolume] = useState(0.42);
@@ -100,6 +102,51 @@ function AppHome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const page = pageRef.current;
+    if (!page) return;
+    let frame = 0;
+
+    const applyPointerPosition = (clientX: number, clientY: number) => {
+      const viewportWidth = window.innerWidth || 1;
+      const viewportHeight = window.innerHeight || 1;
+      const normalizedX = Math.max(0, Math.min(1, clientX / viewportWidth));
+      const normalizedY = Math.max(0, Math.min(1, clientY / viewportHeight));
+      const shiftX = (clientX - viewportWidth / 2) * 0.018;
+      const shiftY = (clientY - viewportHeight / 2) * 0.018;
+
+      page.style.setProperty('--pointer-x', `${normalizedX * 100}%`);
+      page.style.setProperty('--pointer-y', `${normalizedY * 100}%`);
+      page.style.setProperty('--grid-shift-x', `${shiftX * 0.3}px`);
+      page.style.setProperty('--grid-shift-y', `${shiftY * 0.3}px`);
+
+      page.querySelectorAll<HTMLElement>('.star').forEach((star) => {
+        const depth = Number(star.dataset.depth ?? 0.5);
+        star.style.setProperty('--cursor-star-x', `${shiftX * depth}px`);
+        star.style.setProperty('--cursor-star-y', `${shiftY * depth}px`);
+      });
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => applyPointerPosition(event.clientX, event.clientY));
+    };
+
+    const handlePointerLeave = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => applyPointerPosition(window.innerWidth / 2, window.innerHeight / 2));
+    };
+
+    applyPointerPosition(window.innerWidth / 2, window.innerHeight / 2);
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerleave', handlePointerLeave);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerleave', handlePointerLeave);
+    };
+  }, []);
+
   const toggleSound = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(universoConfig.soundtrack.src);
@@ -127,7 +174,7 @@ function AppHome() {
   const selectedDiscovery = discoveries.find((item) => item.id === openDiscovery);
 
   return (
-    <div className="universe-page">
+    <div className="universe-page" ref={pageRef}>
       <Stars />
       <div className="space-grid" aria-hidden="true" />
        <AnimatePresence>{!entered && <Entry onEnter={handleEnter} />}</AnimatePresence>
@@ -160,15 +207,7 @@ function AppHome() {
             </MotionReveal>
           </div>
           <motion.div className="orbital-world" aria-label="Una pequeña ilustración de nuestro planeta" initial={{ opacity: 0, rotate: -6 }} animate={{ opacity: 1, rotate: 0 }} transition={{ duration: 1.4, delay: .25 }}>
-            <div className="planet">
-              <div className="planet-garden" role="img" aria-label="Una flor rosa creciendo en un pequeño jardín">
-                <span className="garden-stem" />
-                <span className="garden-leaf garden-leaf--left" />
-                <span className="garden-leaf garden-leaf--right" />
-                <span className="garden-calyx" />
-                <span className="garden-flower"><i /><i /><i /><i /><i /><b /></span>
-              </div>
-            </div>
+            <div className="planet" aria-label="Nuestro planeta en órbita" />
             <div className="orbit-track orbit-track--one"><span className="orbit-dot orbit-dot--gold" /></div>
             <div className="orbit-track orbit-track--two"><span className="orbit-dot orbit-dot--mint" /></div>
             <div className="orbit-track orbit-track--three"><span className="orbit-dot orbit-dot--pink" /></div>

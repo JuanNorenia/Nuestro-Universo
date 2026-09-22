@@ -1,8 +1,8 @@
 export const universoConfig = {
-  recipientName: '[NOMBRE DE ELLA]',
+  recipientName: 'Antonia',
   senderName: '[TU NOMBRE]',
-  firstDate: '2023-08-19T19:30:00-05:00',
-  firstDateLabel: '[FECHA EN QUE TODO COMENZÓ]',
+  firstDate: '2026-03-14T00:00:00-05:00',
+  firstDateLabel: '14 de marzo de 2026',
   soundtrack: {
     title: '[NOMBRE DE LA CANCIÓN]',
     artist: '[ARTISTA]',
