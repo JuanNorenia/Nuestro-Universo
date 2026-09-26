@@ -28,6 +28,10 @@ type MemoryDetail = {
   mediaType?: 'image' | 'video';
 };
 
+type MemoryViewMode = 'fit' | 'fullscreen' | 'scroll';
+
+const assetUrl = (src?: string) => src ? `${import.meta.env.BASE_URL}${src.replace(/^\/+/, '')}` : undefined;
+
 function MotionReveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
   const reduced = useReducedMotion();
   return (
@@ -81,9 +85,14 @@ function AppHome() {
   const [travelingDiscovery, setTravelingDiscovery] = useState<string | null>(null);
   const [openNote, setOpenNote] = useState<string | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<MemoryDetail | null>(null);
+  const [memoryViewMode, setMemoryViewMode] = useState<MemoryViewMode>('fit');
   const [hasScrolled, setHasScrolled] = useState(false);
   const [count, setCount] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    setMemoryViewMode('fit');
+  }, [selectedMemory?.id]);
 
   useEffect(() => {
     const tick = () => {
@@ -151,7 +160,7 @@ function AppHome() {
 
   const toggleSound = () => {
     if (!audioRef.current) {
-      audioRef.current = new Audio(universoConfig.soundtrack.src);
+      audioRef.current = new Audio(assetUrl(universoConfig.soundtrack.src));
       audioRef.current.loop = true;
       audioRef.current.volume = volume;
     }
@@ -280,7 +289,7 @@ function AppHome() {
             {memories.map((memory) => (
               <button className="memory-piece" key={memory.id} onClick={() => setSelectedMemory(memory)} data-testid={`button-memory-${memory.id}`}>
                 <div className="memory-art" style={{ '--tone': memory.tone, '--glow': memory.glow } as CSSProperties}>
-                  {memory.mediaType === 'video' ? <video className="memory-media" src={memory.media} muted loop playsInline autoPlay aria-label={memory.title} /> : <img className="memory-media" src={memory.media} alt={memory.title} />}
+                  {memory.mediaType === 'video' ? <video className="memory-media" src={assetUrl(memory.media)} muted loop playsInline autoPlay aria-label={memory.title} /> : <img className="memory-media" src={assetUrl(memory.media)} alt={memory.title} />}
                   <span className="memory-shade" />
                   <span className="memory-caption"><span className="memory-index">{memory.id} / {memory.mediaType === 'video' ? 'video' : 'archivo'}</span>{memory.title}</span>
                 </div>
@@ -348,11 +357,19 @@ function AppHome() {
         </section>
       </main>
 
-      <AnimatePresence>{selectedMemory && <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label="Detalle del recuerdo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedMemory(null)}>
+      <AnimatePresence>{selectedMemory && <motion.div className={`lightbox ${memoryViewMode === 'fullscreen' ? 'lightbox--media-fullscreen' : ''}`} role="dialog" aria-modal="true" aria-label="Detalle del recuerdo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedMemory(null)}>
         <motion.div className="lightbox-inner" initial={{ y: 20 }} animate={{ y: 0 }} exit={{ y: 20 }} onClick={(event) => event.stopPropagation()}>
           <button className="close-button" onClick={() => setSelectedMemory(null)} aria-label="Cerrar recuerdo" data-testid="button-close-memory"><X size={16} /></button>
-          <div className="lightbox-art" style={{ '--tone': selectedMemory.tone, '--glow': selectedMemory.glow } as CSSProperties}>
-            {selectedMemory.mediaType === 'video' ? <video className="lightbox-media" src={selectedMemory.media} controls playsInline autoPlay muted /> : selectedMemory.media ? <img className="lightbox-media" src={selectedMemory.media} alt={selectedMemory.title} /> : null}
+          <div className={`lightbox-art ${memoryViewMode === 'scroll' ? 'lightbox-art--scroll' : ''}`} style={{ '--tone': selectedMemory.tone, '--glow': selectedMemory.glow } as CSSProperties}>
+            {selectedMemory.mediaType === 'video' ? <video className="lightbox-media" src={assetUrl(selectedMemory.media)} controls playsInline autoPlay muted /> : selectedMemory.media ? <img className="lightbox-media" src={assetUrl(selectedMemory.media)} alt={selectedMemory.title} /> : null}
+          </div>
+          <div className="lightbox-options" role="group" aria-label="Opciones de visualización del recuerdo">
+            <button className={`lightbox-option ${memoryViewMode === 'fullscreen' ? 'active' : ''}`} type="button" aria-pressed={memoryViewMode === 'fullscreen'} onClick={() => setMemoryViewMode(memoryViewMode === 'fullscreen' ? 'fit' : 'fullscreen')} data-testid="button-memory-fullscreen">
+              {memoryViewMode === 'fullscreen' ? 'volver al marco' : 'ver en pantalla completa'}
+            </button>
+            <button className={`lightbox-option ${memoryViewMode === 'scroll' ? 'active' : ''}`} type="button" aria-pressed={memoryViewMode === 'scroll'} onClick={() => setMemoryViewMode(memoryViewMode === 'scroll' ? 'fit' : 'scroll')} data-testid="button-memory-scroll">
+              {memoryViewMode === 'scroll' ? 'ajustar al marco' : 'mover dentro del marco'}
+            </button>
           </div>
           <h3>{selectedMemory.title}</h3><p>{selectedMemory.caption}</p>
         </motion.div>
