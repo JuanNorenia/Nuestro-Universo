@@ -3,7 +3,7 @@ name: Deploy Nuestro Universo
 on:
   push:
     branches:
-      - main
+      - Maesta
   workflow_dispatch:
 
 permissions:
