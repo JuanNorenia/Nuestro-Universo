@@ -1,0 +1,1 @@
+- [GitHub write access](github-write-access.md) — The connected GitHub OAuth integration may read repository data while commit-creation endpoints remain forbidden.
