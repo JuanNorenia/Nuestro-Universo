@@ -213,7 +213,7 @@ function AppHome() {
             <MotionReveal>
               <div className="eyebrow">una geografía inventada · 01</div>
               <h1 id="hero-title" className="display">Tú y yo,<br /><em className="serif-italic">en órbita.</em></h1>
-               <p className="hero-lede">Este sitio es mi primer intento de hacer algo para inmortalizar esto que tanto siento por ti, pd: perdon si parece un portafolio, soy muy ejecutivo</p>
+               <p className="hero-lede">Este sitio es mi primer intento de hacer algo para inmortalizar esto que tanto siento por ti. P. D.: perdón si parece un portafolio; soy muy ejecutivo.</p>
               <div className="scroll-cue"><ArrowDown size={14} /> explora sin prisa</div>
             </MotionReveal>
           </div>
